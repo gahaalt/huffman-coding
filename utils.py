@@ -1,3 +1,4 @@
+import time
 from collections import Counter
 
 import math
@@ -44,3 +45,13 @@ def decode_text_with_codes(text, codes):
             otext.append(invcodes[act])
             act = ''
     return ''.join(otext)
+
+
+def timer(func):
+    def wrapper(*args, **kwargs):
+        tick = time.time()
+        rets = func(*args, **kwargs)
+        print(f'{func.__module__} time: {time.time() - tick:5.3f}s')
+        return rets
+
+    return wrapper

@@ -1,13 +1,13 @@
-import time
 from sys import getsizeof
 
 import huffman_canonical
+import huffman_extended
 import huffman_standard
 import utils
 
 # %%
 
-with open('books/nietzsche.txt', 'r', encoding='utf-8') as f:
+with open('books/moby_dick.txt', 'r', encoding='utf-8') as f:
     book = f.read()
 
 print('Compression Benchmark')
@@ -23,13 +23,8 @@ freq = utils.get_symbol_frequency(book)
 # standard (bez normalizacji drzewa) huffman
 print('Naive Huffman')
 
-tick = time.time()
 cbook, codes = huffman_standard.build_and_encode(book, freq)
-print(f'Coding time: {time.time() - tick:5.3f}s')
-
-tick = time.time()
 decbook = utils.decode_text_with_codes(cbook, codes)
-print(f'Decoding time: {time.time() - tick:5.3f}s')
 
 clen = len(cbook)
 print(f'Encoded text size: {clen / 8 / 1024:.1f} kB!')
@@ -40,17 +35,38 @@ print()
 # kanoniczny huffman
 print('Canonical Huffman')
 
-tick = time.time()
 cbook, codes = huffman_canonical.build_and_encode(book, freq)
-print(f'Coding time: {time.time() - tick:5.3f}s')
-
-tick = time.time()
 decbook = utils.decode_text_with_codes(cbook, codes)
-print(f'Decoding time: {time.time() - tick:5.3f}s')
 
 clen = len(cbook)
 print(f'Encoded text size: {clen / 8 / 1024:.1f} kB!')
 print(f'Encoded matches decoded: {decbook == book}')
 print()
+
+# %%
+# rozszerzony huffmana z mnożeniem prawdopodobieństw
+
+for k in [1, 2, 3, 5, 10]:
+    print(f'Extended Huffman, group size {k}')
+    cbook, codes = huffman_extended.build_and_encode(book, freq=freq, group_size=k)
+    decbook = utils.decode_text_with_codes(cbook, codes)
+
+    clen = len(cbook)
+    print(f'Encoded text size: {clen / 8 / 1024:.1f} kB!')
+    print(f'Encoded matches decoded: {decbook == book}')
+    print()
+
+# %%
+# rozszerzony huffmana z wyliczaniem prawdopodobieństw
+
+for k in [1, 2, 3, 5, 10]:
+    print(f'Extended Huffman+, group size {k}')
+    cbook, codes = huffman_extended.build_and_encode(book, group_size=k)
+    decbook = utils.decode_text_with_codes(cbook, codes)
+
+    clen = len(cbook)
+    print(f'Encoded text size: {clen / 8 / 1024:.1f} kB!')
+    print(f'Encoded matches decoded: {decbook == book}')
+    print()
 
 # %%

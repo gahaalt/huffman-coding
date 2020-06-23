@@ -34,6 +34,7 @@ def get_huffman_codes(freq):
     return codes
 
 
+@utils.timer
 def build_and_encode(text, freq):
     codes = get_huffman_codes(freq)
     return utils.encode_text_with_codes(text, codes), codes

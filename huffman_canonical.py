@@ -5,11 +5,6 @@ from sortedcontainers import SortedList
 
 import utils
 
-# %%
-
-with open('books/alice_in_wonderland.txt', 'r', encoding='utf-8') as f:
-    book = f.read()
-
 
 # %%
 
@@ -107,6 +102,7 @@ assert sym2code == {1: '1111', 2: '1110', 3: '1101', 4: '1100', 5: '101', 6: '10
 
 # %%
 
+@utils.timer
 def build_and_encode(text, freq):
     levels = get_levels(freq)
     only_codes = levels_to_codes(levels)
