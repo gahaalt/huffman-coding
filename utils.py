@@ -2,9 +2,10 @@ import time
 from collections import Counter
 
 import math
+from sys import getsizeof
 
 
-def get_theoretical_size(text):
+def get_theoretical_size_of_text(text):
     num_unique = len(set(text))
     bits_per_symbol = math.ceil(math.log2(num_unique))
     return int(math.ceil(len(text) * bits_per_symbol / 8))
@@ -55,3 +56,9 @@ def timer(func):
         return rets
 
     return wrapper
+
+
+def get_codebook_size(f):
+    maxkey = max(f.values())
+    bytes_per_number = math.ceil(math.ceil(math.log2(maxkey)) / 8)
+    return getsizeof(list(f.keys())) + bytes_per_number * len(f)

@@ -47,7 +47,7 @@ def get_levels(freq):
     return levels
 
 
-test_input = '1234455666777777777777'
+test_input = '7777771523445666777777'
 freq = utils.get_symbol_frequency(test_input)
 levels = get_levels(freq)
 assert levels == [1, 0, 2, 4]
