@@ -1,4 +1,5 @@
 # %%
+import time
 from collections import Counter
 
 from sortedcontainers import SortedList
@@ -16,46 +17,59 @@ def get_levels(freq):
     """
 
     class Node:
-        def __init__(self, prob, depth=0, creation_t=0, lson=None, rson=None):
+        def __init__(self, prob, creation_t=0, lson=None, rson=None):
             self.prob = prob
             self.lson = lson
             self.rson = rson
-            self.depth = depth
             self.creation_t = creation_t
 
-    leaves = [Node(f) for f in freq.values()]
-    nodes = SortedList(leaves, key=lambda x: (-x.prob, -x.creation_t))
+    nodes = [Node(f) for f in freq.values()]
+    nodes = SortedList(nodes, key=lambda x: (-x.prob, -x.creation_t))
 
     global_age = 1
     while len(nodes) > 1:
         v1 = nodes.pop()
         v2 = nodes.pop()
-        depth = max(v1.depth, v2.depth)
-        v1.depth = depth
-        v2.depth = depth
+
         new_node = Node(prob=v1.prob + v2.prob,
-                        depth=depth + 1,
                         lson=v1,
                         rson=v2,
                         creation_t=global_age)
         nodes.add(new_node)
         global_age += 1
 
-    root = nodes[0]
-    counts = Counter([root.depth - 1 - leave.depth for leave in leaves])
-    levels = [counts[i] for i in range(root.depth)]
-    return levels
+    # search the tree to find the leaves
+    depth = 0
+    leaves = []
+    this_level = [nodes[0]]
+    while this_level:
+        new_level = []
+        while this_level:
+            node = this_level.pop()
+            if not node.rson and not node.lson:
+                leaves.append(depth)
+            else:
+                if node.rson:
+                    new_level.append(node.rson)
+                if node.lson:
+                    new_level.append(node.lson)
+
+        this_level = new_level
+        depth += 1
+    leaves = Counter(leaves)
+    leaves = [leaves[k] for k in range(1, depth)]
+    return leaves
 
 
 test_input = '7777771523445666777777'
 freq = utils.get_symbol_frequency(test_input)
-levels = get_levels(freq)
-assert levels == [1, 0, 2, 4]
+leaves = get_levels(freq)
+assert leaves == [1, 0, 2, 4]
 
 
 # %%
 
-def levels_to_codes(levels):
+def leaves_to_codes(levels):
     """
     W kodowaniu kanonicznym słowa kodowe moga byc nadanawe za pomocą tablicy levels.
     Niech D będzie najmniejszym indeksem, dla którego levels[D] != 0.
@@ -78,7 +92,8 @@ def levels_to_codes(levels):
     return codes
 
 
-codes = levels_to_codes(levels)
+codes = leaves_to_codes(leaves)
+
 assert codes == ['0', '100', '101', '1100', '1101', '1110', '1111']
 
 
@@ -96,6 +111,8 @@ def match_freq_with_codes(freq, codes):
 
 freq = {1: 1, 2: 1, 3: 1, 4: 2, 5: 2, 6: 3, 7: 12}
 sym2code = match_freq_with_codes(freq, codes)
+
+
 assert sym2code == {1: '1111', 2: '1110', 3: '1101', 4: '1100', 5: '101', 6: '100',
                     7: '0'}
 
@@ -104,9 +121,17 @@ assert sym2code == {1: '1111', 2: '1110', 3: '1101', 4: '1100', 5: '101', 6: '10
 
 @utils.timer
 def build_and_encode(text, freq):
+    time0 = time.time()
     levels = get_levels(freq)
-    only_codes = levels_to_codes(levels)
+    tree_time = time.time() - time0
+
+    only_codes = leaves_to_codes(levels)
     codes = match_freq_with_codes(freq, only_codes)
-    return utils.encode_text_with_codes(text, codes), codes
+
+    time0 = time.time()
+    encoded = utils.encode_text_with_codes(text, codes)
+    enco_time = time.time() - time0
+
+    return encoded, codes, tree_time, enco_time
 
 # %%

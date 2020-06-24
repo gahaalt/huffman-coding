@@ -13,7 +13,7 @@ def get_huffman_codes(freq):
 
     codes = {key: str() for key in freq}
     nodes = [Node(v, letter=k) for k, v in freq.items()]
-    nodes = SortedList(nodes, key=lambda x: (-x.prob, len(x.letter)))
+    nodes = SortedList(nodes, key=lambda x: -x.prob)
 
     while len(nodes) > 1:
         v1 = nodes.pop()
@@ -38,3 +38,8 @@ def get_huffman_codes(freq):
 def build_and_encode(text, freq):
     codes = get_huffman_codes(freq)
     return utils.encode_text_with_codes(text, codes), codes
+
+
+test_input = '7777771523445666777777'
+freq = utils.get_symbol_frequency(test_input)
+codes = get_huffman_codes(freq)
