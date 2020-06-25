@@ -11,8 +11,9 @@ Testy przeprowadzono na danych:
     * a) Alice in Wonderland
     * b) Moby Dick or The Whale
     * c) Beyond Good and Evil
-2. Dane (dane z których korzystałem i ich rozmiar przysporzył mi kłopotu):
+2. Inne:
     * a) podzbiór 20000 wektorów słów word2vec
+    * b) losowo wygenerowane ciągi liter
 
 ## Instrukcja obsługi
 #### Interfejs w Pythonie
@@ -52,7 +53,7 @@ Jak widać, w przypadku tego zbioru danych (2a) różnica w wariancji jest napra
 | Beyond Good and Evil | 785.8 kB | 225.5 kB | 201.1 + 20.3 kB |
 | Moby Dick or the Whale | 2418.5 kB | 684.2 kB | 612.0 + 22.4 kB |
 | Wektory word2vec 20k   | 15.3 MB | 6.6 MB | 5.6 + 0.1 MB |
-> Wyniki kompresji na różnych rodzajach danych. W przypadku niewielkich danych, kody rozszerzone mogą działać gorzej niż kody nierozszerzone. Jednak nawet zwykłe kodowanie Huffmana pozwala na zadowalającą kompresję danych.
+> Wyniki kompresji na różnych rodzajach danych. W przypadku niewielkich danych, kody rozszerzone mogą działać gorzej niż kody nierozszerzone. Jednak nawet zwykłe kodowanie Huffmana pozwala na zadowalającą kompresję danych. Dla danych wygenerowanych losowo zaobserwowano minimalną jedynie kompresję.
 
 ## Rozszerzone kodowanie Huffmana
 W tym wariancie kodujemy nie symbole, a krótkie ciągi symboli. Ustalamy długość _K_ ciągu symboli która będzie kodowana i z takich ciągów tworzymy słownik. Możemy liczyć wystąpienia ciągów długości _K_ w dokumencie lub użyć liczby wystąpień poszczególnych symboli, zakładając że występują niezależnie od siebie. Porównuję oba te podejścia.
